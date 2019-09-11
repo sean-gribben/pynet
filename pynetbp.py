@@ -1,5 +1,5 @@
 from random import normalvariate as norm
-from math import e as euler
+from math import e as exp
 
 class net():
 
@@ -43,7 +43,7 @@ class net():
 		return ret
 
 	def sigmoid(self, x):
-		return 1/(1+(euler**-x))
+		return 1/(1+(exp**-x))
 
 	def activate(self, activation_matrix):
 		# Using sigmoid
@@ -58,6 +58,9 @@ class net():
 			self.activations[index+1] = forward_propagation
 		return self.activations
 
+	def __str__(self):
+		return str(self.activations[-1])
+
 	# Time for the big boy
 
 	def sigmoid_prime(self, x):
@@ -71,9 +74,9 @@ class net():
 	def output_delta(self, activation, t):
 		return (activation - t)*activation*(1 - activation)
 
-	def train(self, input_data, desired_output, epochs=1000, learning_rate=0.5):
+	def train(self, input_data, desired_output, epochs=1000, learning_rate=0.5, print_error=0):
 		for epoch in range(epochs):
-			print(self.error)
+			if print_error: print(self.error)
 			for position in range(len(input_data)):
 				self.fire(input_data[position])
 				error = self.find_error(desired_output[position])
@@ -99,3 +102,13 @@ class net():
 						for oj in range(len(self.activations[layer+1][0])):
 							change = -learning_rate*deltas[layer+1][0][oj]*self.activations[layer][0][oi]
 							self.weights[layer][oi][oj] += change
+
+if __name__ == '__main__':
+	nnet = net([3,5,3])
+	input_data = [[[0,0,0]],[[0,0,1]],[[0,1,0]],[[0,1,1]],[[1,0,0]],[[1,0,1]],[[1,1,0]]]
+	desired_output = [[[0,0,1]],[[0,1,0]],[[0,1,1]],[[1,0,0]],[[1,0,1]],[[1,1,0]],[[1,1,1]]]
+
+	nnet.train(input_data, desired_output)
+	for i in input_data:
+		nnet.fire(i)
+		print('input:', i, 'network output:', nnet)
